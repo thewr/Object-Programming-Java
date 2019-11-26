@@ -1,0 +1,134 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package CodeSalad;
+
+//tool interface
+
+import java.util.LinkedList;
+import java.util.NoSuchElementException;
+
+interface Tool extends Cloneable {
+    String getName();
+    void use();
+    Object clone();
+}
+
+//toolbox interface
+interface Toolbox{
+    void add(Tool tool);
+    Tool get(String toolName);
+}
+
+class myToolbox implements Toolbox{
+    
+    LinkedList<Tool> toolList = new LinkedList<>();
+
+    @Override
+    public void add(Tool tool) {
+        this.toolList.add(tool);
+    }
+
+    @Override
+    public Tool get(String toolName) {
+        
+        Tool gotten = null;
+        
+            for(Tool tool : this.toolList)
+            {
+                if(tool.getName().matches(toolName))
+                {
+                    gotten = tool;
+                }
+            }
+            
+            if(gotten == null)
+            {
+                throw new NoSuchElementException();
+            }
+            else
+            {
+                return gotten;
+            }
+           
+    }
+  
+}
+
+//Eraser object implements Tool
+class Eraser implements Tool {
+    private String name = "Eraser"; 
+
+    @Override
+    public Object clone() {
+        Object clone = null;
+        try {
+                clone = (Eraser) super.clone(); 
+        } catch(CloneNotSupportedException e)
+        {
+            System.out.println(e);
+        }
+        return clone;
+    }
+
+    @Override
+    public String getName() {
+        return name;
+    }
+
+    @Override
+    public void use() {
+        System.out.println("Using " + this.getName());
+    }
+}
+
+//Pencil object implements Tool
+class Pencil implements Tool {
+    private String name = "Pencil"; 
+
+    @Override
+    public Object clone() {
+        Object clone = null;
+        try {
+                clone = (Eraser) super.clone(); 
+        } catch(CloneNotSupportedException e)
+        {
+            System.out.println(e);
+        }
+        return clone;
+    }
+
+    @Override
+    public String getName() {
+        return name;
+    }
+
+    @Override
+    public void use() {
+        System.out.println("Using " + this.getName());
+    }
+}
+
+
+
+
+public class Tester {
+    public static void main(String[] args){
+        Tool t;
+        myToolbox tb = new myToolbox();
+
+        t = new Eraser();
+        t.use();
+        tb.add(t);
+        
+        t = new Pencil();
+        t.use();
+        tb.add(t);
+
+        System.out.println(tb.get("Eraser").getName());
+        System.out.println(tb.get("Pencil").getName());
+    }
+    
+}
