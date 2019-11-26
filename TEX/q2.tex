@@ -1,0 +1,332 @@
+	
+%%%%%%%%%%%%%%%%%%%%%%%%%% QUESTION 2 QUESTION 2 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+6.1 Answer these questions
+
+%6,1a
+\begin{enumerate}[label=(\alph*),align=left, wide, labelwidth=!, labelindent=0pt]
+\item When should abstract classes be used ?  Give a general explanation and example.
+
+\begin{enumerate}[leftmargin = 1cm, rightmargin = 1cm]
+\item[]  When we require to inherit multiple instances of a class.  Allthough only one instance can be inherited, we can extend this through abstraction.  Abstraction is used when all the subclasses already use all the methods of the abstract class.  The abstract class is never implemented as its own.  An example would be an Employee as an abstract class and the classes which use it are Doctor and Nurse.  Both utilize the Employee class through instances of its attributes and calling its methods.  
+  		
+\end{enumerate}
+
+%6,1b
+\item Explain when an abstract class cannot be used in a Java program and an interface is the only choice.
+
+\begin{enumerate}[leftmargin = 1cm, rightmargin = 1cm]
+\item[]  Not all methods can be used at once.  The methods each used shouldn't be replicated within their own subclass.  Instead an interface allows for parts of the whole to be utilized so that no class stands apart on its own.  A situation where this occurs is when each class must share the methods of the abstract class, either on a first come first basis or through a Strategy.  
+  		
+\end{enumerate}
+
+%6,1c
+\item The Section class used in a text editor application includes a text attribute, contains a collection of objects of class Section or its subclasses, and has a metod called display that displays the text of this section object and of all other referenced in its collection.
+
+What design pattern does class Section implement ? Explain.
+
+\begin{enumerate}[leftmargin = 1cm, rightmargin = 1cm]
+\item[]  This appears to be a Singleton Pattern.  Nothing is changed and only the Section class calls itself to display its contents.
+  		
+\end{enumerate}
+
+\end{enumerate}
+
+
+
+
+
+%%%%%%%%%%%%   -------------------- 6.2 ----------------------           %%%%%%%%%%%%%%%%%%%
+
+6.2 
+
+%6,2a
+\begin{enumerate}[label=(\alph*),align=left, wide, labelwidth=!, labelindent=0pt]
+\item Explain in detail and with your own words why classes Rectangle2d, Rectangle2D.Float, and Rectangle2d.Double implement the Template Method design pattern.
+
+Why is Rectangle2D an abstract class?
+
+\begin{enumerate}[leftmargin = 1cm, rightmargin = 1cm]
+\item[]  Each class is outlined with respect to the abstract class, Rectangle2d, so that the methods and instances called in each are built, created and implemented with their own intent and function.  For instance a Rectangle2D using a Float method is best for an environment that is using Floating calculation while a Doube method is best for that which is Double.  Yet both still serve to be a Rectangle2D object.  Their final intent never was altered.  The client doesn't have to witness the internal operation within .Float or .Double.
+\end{enumerate}
+
+
+%6,2b
+\item Explain why CompoundShape.add method is protected. 
+
+Explain why CompoundShape.path is private.
+
+\begin{enumerate}[leftmargin = 1cm, rightmargin = 1cm]
+\item[]  CompoundShape.add can only be called within CompoundShape and so it is protected.  However, other objects within its package may use the method.  CompoundShape.path is private because on this object needs to use the method or attribute.  No other object can change the path since it most likely affects critical paraments in the behavior of CompoundShape.
+  		
+\end{enumerate}
+
+
+\end{enumerate}
+
+%%%%%%%%%%%%   -------------------- 6.3 ----------------------           %%%%%%%%%%%%%%%%%%%
+
+6.3
+
+Consider the Employee class hierachy from the beginning of Chapter 6.
+
+Use the Template Method design pattern to implement a Template Method for the Employee class:
+
+String toJson()
+
+that generates a JSON string ....
+
+%6,3a
+
+\begin{enumerate}[label=(\alph*),align=left, wide, labelwidth=!, labelindent=0pt]
+\item Describe the mapping (table) from the pattern context to Employee problem domain.
+
+methods setSalary, getname (inherited from Employee)
+method getSalary (overridden in Manager)
+method setBonus (defined in Manager)
+fields name and salary (defined in Employee)
+field bonus (defined in Manager)
+
+
+\begin{enumerate}[leftmargin = 1cm, rightmargin = 1cm]
+\item[]  A Manager is an Employee.  Employee is a superclass of Manager which is a subclass of Employee.  The map implements a heirachy of inherentents.  This allows for a subclass object to be implemented whenever a superclass object is expected.  Employee e is used as a reference to Manager.
+  		
+\end{enumerate}
+
+
+%6,3b
+\item Show the UML class diagram.
+
+\begin{minipage}[h]{\linewidth}
+			\raggedright
+			\adjustbox{valign=t}{%
+				\includegraphics[width=1\linewidth]{{UML63}.png}
+			}
+\end{minipage}
+
+
+%6,3c
+\item Write the JAVA code.
+
+\begin{lstlisting}[language = Java , frame = trBL , firstnumber = last , escapeinside={(*@}{@*)}]
+public class Employee {
+    String name; 
+    double salary;
+    private double bonus;
+    
+    
+    /**
+     * Constructor for Employee
+    */
+    Employee(String n)
+    {
+        this.name = n;
+    }
+    
+   /**
+      Gets the employee name. 
+      @return name
+   */ 
+    public String getName()
+    {
+        return name;
+    }
+   
+    /**
+      Gets the employee salary. 
+      * @return salary
+   */ 
+    public double getSalary()
+    {
+        return salary;
+    }
+
+    
+    /**
+      Sets the employee salary to a given value. 
+      @param aSalary the new salary 
+      @precondition aSalary > 0 
+   */ 
+    public void setSalary(double aSalary){
+        this.salary = aSalary;
+    }
+    
+    /**
+      Sets the employee bonus to a given value. 
+      @param aBonus the new salary 
+      @precondition aBonus > 0 
+   */ 
+    public void setBonus(int aBonus)
+    {
+        this.bonus = aBonus;
+    }
+    
+    /**
+      Displays the contents of the class as a JSON object. 
+      @precondition name and salary must have been set. 
+   */ 
+    
+    String toJson(){
+        String aClass = this.getClass().getSimpleName();
+        String s = "{\"class\": \"" + aClass + "\", \"name\":" +  "\"" + name + "\"" + ", \"salary\": " + salary + "}";
+        
+        return s;
+    }
+}
+\end{lstlisting}  		
+
+\begin{lstlisting}[language = Java , frame = trBL , firstnumber = last , escapeinside={(*@}{@*)}]
+public class Manager extends Employee {
+    
+   public Manager(String aName) {
+       super(aName);    //calls super constructor
+       bonus = 0;
+   }
+   
+   public void setBonus(double aBonus) { bonus = aBonus; } // new method
+   
+   public double getSalary() { 
+    return super.salary + bonus;  // ERROR--private field
+   } // overrides Employee method
+
+   private double bonus; // new field
+   
+   String toJson(){
+        String s = "{\"class\": \"Manager\", \"name\":" +  "\"" + name + "\"" + ", \"salary\": " + salary + "}";
+        
+        return s;
+    }
+    
+    
+    public static void main(String[] args){
+        Employee sarah = new Employee("Sarah");
+        sarah.setSalary(50000);
+        Manager sandy = new Manager("Sandy");
+        sandy.setSalary(100000);
+        sandy.setBonus(1234);
+        
+        System.out.println(sarah.toJson());
+        System.out.println(sandy.toJson());
+        
+    }
+
+}
+\end{lstlisting}  		
+
+\end{enumerate}
+
+\newpage
+
+6.4
+\begin{enumerate}[label=(\alph*),align=left, wide, labelwidth=!, labelindent=0pt]
+\item Create UML class/sequence diagrams for slight simulation
+
+\begin{minipage}[h]{\linewidth}
+			\raggedright
+			\adjustbox{valign=t}{%
+				\includegraphics[width=1\linewidth]{{UML64}.png}
+			}
+\end{minipage}
+
+\begin{minipage}[h]{\linewidth}
+			\raggedright
+			\adjustbox{valign=t}{%
+				\includegraphics[width=1\linewidth]{{UML642}.png}
+			}
+\end{minipage}
+
+
+\item Java Code
+\begin{lstlisting}[language = Java , frame = trBL , firstnumber = last , escapeinside={(*@}{@*)}]
+import java.util.*;
+
+// class for Category that an airplane behaves under
+class Category {
+    double weight;
+    double speed;
+    
+    
+    Category(double w, double s)
+    {
+        this.weight = w;
+        this.speed = s;
+    }
+}
+
+// Class for model of airplane 
+class Model{
+    String mName;
+    Category cat;
+    
+    Model(String mName, double weight, double speed){
+        this.mName = mName;
+        this.cat = new Category(weight,speed);
+    }
+    
+    public String toString()
+    {
+        String s = "Name: " + this.mName;
+        s = s + "; Weight: " + this.cat.weight;
+        s = s + "; Speed: " + this.cat.speed;
+        return s;
+    }
+}
+
+// manages the models being created and the categories set
+public class ModelManager {
+    static ArrayList<Model> types = new ArrayList<>();
+
+    
+
+    
+    public void addModel(String mName, double mWeight, double mSpeed)
+    {
+        Model m = new Model(mName,mWeight,mSpeed);
+        types.add(m);
+    }
+    
+    public Model getModel(String mName)
+    {
+        Model m = types.get(0);
+        for(int i = 0; i < types.size(); i++)
+        {
+            m = types.get(i);
+            
+            if(mName.matches(types.get(i).mName)){
+                break;
+            }            
+        }
+        return m;
+    }
+    
+
+}
+\end{lstlisting}
+
+\begin{lstlisting}[language = Java , frame = trBL , firstnumber = last , escapeinside={(*@}{@*)}]
+public class Simulation {
+    
+    
+    
+        public static void main(String[] args){  
+            
+            ModelManager mg = new ModelManager();
+            
+            mg.addModel("Single-Engine", 1850, 250);
+            
+            //light helicopter
+            mg.addModel("Helicopyer", 12000, 295);
+            
+            mg.addModel("Fighter Jet", 4000, 1300);
+            
+            System.out.println( mg.getModel("Single-Enginer").toString() );
+            
+            
+            
+
+    }
+}
+
+
+\end{lstlisting}
+
+\end{enumerate}

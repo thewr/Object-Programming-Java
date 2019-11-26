@@ -1,0 +1,444 @@
+L.1
+\begin{enumerate}[label=(\alph*),align=left, wide, labelwidth=!, labelindent=0pt]
+
+\item Write a class implementing the Functor<Integer,String> interface, called LengthFun.  It returns the length of a string.
+\begin{lstlisting}[language = Java , frame = trBL , firstnumber = last , escapeinside={(*@}{@*)}]
+interface functor<R,T> {
+   // public R functor(R r, T t);    
+
+    public R apply(T param);
+    
+}
+
+
+public class LengthFun implements functor<Integer, String> {    
+
+    private String s;
+    
+    public void setString(String _s){
+        this.s = _s;
+    }
+    
+    public String getString(){
+        return s;
+    }
+    
+    public Integer apply(){
+        return s.length();
+    }
+    
+    @Override
+    public Integer apply(String param) {
+        return param.length();
+    }    
+    
+    
+    public static void main(String[] args)
+    {
+        LengthFun lf = new LengthFun();
+        String sinput = "Enjoyment";
+        lf.setString(sinput);
+        System.out.println("LengthFun apply() implemented");
+        System.out.println("Length of the word: " + sinput + "; is " + lf.apply());
+        System.out.println("LengthFun implementing functor method ... no initializiation of private string necessary");
+        System.out.println("Length = " + lf.apply(sinput));
+    }
+}
+\end{lstlisting}  		
+
+\item Define a subclass of $LinkedList<T>$, called $MyList<T>$, that has an additionalgeneric function that "maps" the elements from the list to a new $MyList<R>$ objectthrough a functor object.
+
+\begin{lstlisting}[language = Java , frame = trBL , firstnumber = last , escapeinside={(*@}{@*)}]
+import java.util.LinkedList;
+
+interface Functor<R,T> {
+    public R apply(T param);
+}
+
+class TimesTwoFun implements Functor<Integer,Integer>
+{
+    @Override
+    public Integer apply(Integer param){
+        return 2*param;
+    }
+}
+
+public class MyList<T> extends LinkedList<T>{
+    
+    public <R> MyList<R> map(Functor<R, Integer> fo) {
+        MyList<R> other = new MyList<>();
+        for(int i = 0; i < this.size(); i++){
+            other.add(fo.apply((Integer) this.get(i)));
+        }
+        return other;
+    }
+    
+    public static void main(String[] args)
+    {
+        MyList<Integer> mylist = new MyList();
+        TimesTwoFun tt = new TimesTwoFun();
+        mylist.add(-2);
+        mylist.add(5);
+        mylist.add(-1);
+        System.out.println("Original list: " + mylist.toString());
+        MyList<Integer> mylist2 = mylist.map(tt);
+        System.out.println("New list after mapping with TimesTwoFun(): " +  mylist2.toString());
+    
+    }
+
+}
+\end{lstlisting}  		
+
+\end{enumerate}
+ 
+10.1
+
+\noindent
+%%%%%%%%%%%%%%%%%%%%%%%%%% QUESTION 1 QUESTION 1 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{enumerate}[label=(\alph*),align=left, wide, labelwidth=!, labelindent=0pt]
+
+%% 5,1a
+  		\item Use the Adapter pattern to design a generic queue class called $LQueue<E>$ that implements interface $MyQueue<E>$ and that uses a $LinkedList<E>$ object.  Write the UML class diagram for the pattern.
+  		
+\begin{minipage}[h]{\linewidth}
+			\raggedright
+			\adjustbox{valign=t}{%
+				\includegraphics[width=1\linewidth]{{UML}.png}
+			}
+\end{minipage}
+  		
+  		  		
+%% 5,1b  		
+  		\item Implement class $LQueue<E>$ in Java
+  		\begin{lstlisting}[language = Java , frame = trBL , firstnumber = last , escapeinside={(*@}{@*)}]
+class LQueue<E> implements MyQueue<E> {
+    LinkedList<E> L = new LinkedList<E>();
+
+    //Precondition: the queue is not empty.
+    //Postcondition: the head of the queue is removed and returned
+    //Returns: the element at the head of the queue is returned     
+    public E head() {
+        return L.getFirst();
+    }
+    
+    //Precondition: the queue is not empty.
+    //Postcondition: the head of the queue is removed and returned
+    //Description: removes an element E from front of LinkedList interfacing as MyQueue.
+    public E dequeue() {
+            return L.removeFirst();
+    }
+    
+    //Postcondition: the value is added to the tail of the structure
+    //Paramaters: @e - the value to be added
+    public void enqueue(E e) {
+        L.addLast(e);
+    }
+
+    //Postcondition: the value is added to the tail of the structure
+    //Paramaters: @e - the value to be added
+    public int size() {
+        return L.size();
+    }
+
+    //Postcondition: returns true if and only if the queue is empty
+    //Returns: True iff the queue is empty.
+    public boolean isEmpty() {
+        return L.isEmpty();
+    }
+
+    //Precondition: a collection is not empty
+    //Postcondition: all of the values in collection are added to queue
+    public void addAll(Collection<? extends E> c) {
+        Iterator<E> iter = (Iterator<E>) c.iterator();
+        
+        // get contents of collection and add to queue
+        while(iter.hasNext()){
+            enqueue(iter.next());
+        }
+    }
+    
+}
+		\end{lstlisting}  		
+  		
+  		
+%% 5,1b  	  		
+\newpage
+  		\item Write a class QueueTest
+  		
+  		\begin{minipage}[h]{\linewidth}
+			\raggedright
+			\adjustbox{valign=t}{%
+				\includegraphics[width=1\linewidth]{{testing2}.png}
+			}
+	\end{minipage}
+ 
+ \begin{lstlisting}[language = Java , frame = trBL , firstnumber = last , escapeinside={(*@}{@*)}]
+ public class QueueTest {
+    public static void main(String[] args)
+    {
+        LQueue<Integer> Q = new LQueue<>();
+        Collection<Integer> list = new LinkedList<Integer>();
+        
+        // adding to collection
+        list.add(2);
+        list.add(4);
+        list.add(3);
+        list.add(5);
+        list.add(11);
+        list.add(8);
+
+        // starting testing 
+        System.out.println();
+        System.out.println("TESTING head() && enqueue() ...");
+        System.out.println("Adding 6 to queue");
+        Q.enqueue(6);
+        System.out.println("Checking if head of queue is 6 ... ");
+        if(Q.head() == 6)
+            System.out.println("   PASS");
+        else
+            System.out.println("   FAIL");
+        
+        
+        System.out.println();
+        System.out.println("Size of Queue is " + Q.size());
+        System.out.println("Is queue empty? " + Q.isEmpty());
+        
+        System.out.println();
+        System.out.println("TESTING dequeue() ...");
+        Q.dequeue();
+        System.out.println("Is queue empty? " + Q.isEmpty());
+        
+        System.out.println();
+        System.out.println("Adding ALL collection to queue: 2, 4, 5, 11, 8");
+        Q.addAll(list);
+        System.out.println("Que contents:");
+        while(! Q.isEmpty()){
+            System.out.print(Q.head() + " " );
+            Q.dequeue();
+        }
+        System.out.println();
+    }
+ 
+}
+ \end{lstlisting}
+  		
+\end{enumerate}
+ 
+ \newpage
+10.2
+ 
+ \begin{enumerate}[label=(\alph*),align=left, wide, labelwidth=!, labelindent=0pt]
+
+%% 5,2a
+\item Use the Singleton patternf or a new Java class Stdout that has one instance.  A programmer can use the instance to print txt lines (String objects) to the terminal with the method printlnine();
+
+ \begin{lstlisting}[language = Java , frame = trBL , firstnumber = last , escapeinside={(*@}{@*)}]
+ // Singleton class to print only one message per instance
+class Stdout {
+    
+    //Postcondition: line is set by string and displaced, any other instance 
+    //              will have the same line
+    
+    public void printline(String s)
+    {
+        line = s;
+        System.out.println(s);        
+    }
+    
+    //used to display as singleton
+    public void printline()
+    {
+        System.out.println(line);
+    }
+    public static Stdout getInstance(){
+        return stdout;
+    }
+
+    public String line;
+    private Stdout(){}  // private constructor
+    private static Stdout stdout = new Stdout();
+    // static variable for singleton instance
+    private static Stdout Stdout_instance = null;
+    
+}
+ \end{lstlisting}
+ \newpage
+  		
+  		\begin{minipage}[h]{\linewidth}
+			\raggedright
+			\adjustbox{valign=t}{%
+				\includegraphics[width=1\linewidth]{{testing3}.png}
+			}
+	\end{minipage}
+	
+\begin{lstlisting}[language = Java , frame = trBL , firstnumber = last , escapeinside={(*@}{@*)}]
+public class PrintTest {
+    public static void main(String[] args){
+        Stdout out = Stdout.getInstance();
+        out.printline("Testing 1..5..6");
+        Stdout out1 = Stdout.getInstance();
+        out1.printline();
+    }
+}
+ \end{lstlisting}
+
+
+\end{enumerate}
+
+\newpage
+7.2
+ 
+ \begin{enumerate}[label=(\alph*),align=left, wide, labelwidth=!, labelindent=0pt]
+
+%% 5,2a
+\item Implement a generic class $Pair<K,V>$ that stores pairs of (key, value) pairs.
+
+ \begin{lstlisting}[language = Java , frame = trBL , firstnumber = last , escapeinside={(*@}{@*)}]
+class Pair<K,V> implements Cloneable {   
+
+    //Constructor for Pair
+    //Parameters: K ~ key, V ~ value
+    public Pair(K k, V v)
+    {
+        this.key = k;
+        this.value = v;
+    }
+        
+    //helper function to get key    
+    public K k(){
+        return key;
+    }
+    
+    //helper function to get value
+    public V v(){
+        return value;
+    }
+    
+    @Override
+    public boolean equals(Object obj){
+        if(this.toString().matches(obj.toString()))
+            return true;
+        else
+            return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 73 * hash + Objects.hashCode(this.key);
+        hash = 73 * hash + Objects.hashCode(this.value);
+        return hash;
+    }
+    
+    @Override
+    public String toString(){
+        return this.k().toString() + ", " + v();
+    }
+    
+    @Override
+    public Object clone() throws CloneNotSupportedException{
+        return super.clone();
+    }
+            
+    public K key;
+    public V value;
+}
+}
+ \end{lstlisting}
+ 
+ \newpage
+ \item Write a PairTest class to test all functions 
+  		
+  		\begin{minipage}[h]{\linewidth}
+			\raggedright
+			\adjustbox{valign=t}{%
+				\includegraphics[width=1\linewidth]{{testing4}.png}
+			}
+	\end{minipage}
+	
+	\newpage
+	
+\begin{lstlisting}[language = Java , frame = trBL , firstnumber = last , escapeinside={(*@}{@*)}]
+public class PairTest {
+    
+    
+    static public void serializeTest(Pair pair) throws IOException{
+        Writer fileWriter = new FileWriter("Pair.txt");
+        System.out.println("Pair being writen to file -- Pair.txt");
+        System.out.println("   Key = " + pair.k());
+        System.out.println("   Value = " + pair.v());
+        try (PrintWriter out = new PrintWriter(fileWriter)) {
+            out.print(pair.toString());
+        }
+        
+        File file = new File("Pair.txt"); 
+        BufferedReader br = new BufferedReader(new FileReader(file));
+  
+        String line;
+        System.out.println("Pair being read from file -- Pair.txt");
+
+        while ((line = br.readLine()) != null) {
+            String[] split = line.split(",");
+            System.out.println("   Key = " + split[0]);
+            System.out.println("   Value = " + split[1].trim());
+        }
+        
+        System.out.println("Testing done");
+            
+    }
+    
+    public static void main(String[] args)
+    {
+        System.out.println("PAIRS DEFINED");
+        Pair<Integer,String> p = new Pair<>(1,"One");
+        Pair<Integer,String> p1 = new Pair<>(1,"One");
+        Pair<Integer,String> p2 = new Pair<>(2,"Two");
+        
+        System.out.println("p = [" + p.toString() + "]");
+        System.out.println("p1 = [" + p.toString() + "] ~exactly equal to p~");
+        System.out.println("p2 = [" + p.toString() + "]");
+
+        
+        // test equality
+        System.out.println("");
+        System.out.println("TESTING EQUALITY");
+        System.out.println("Does [" + p +"] equal [" + p1 +"] ?");
+        System.out.println("Result: " + p.equals(p1));
+        System.out.println("Does [" + p +"] equal [" + p2 +"] ?");
+        System.out.println("Result: " + p.equals(p2));
+        
+        // test clone
+        System.out.println("");
+        System.out.println("TESTING clone()");
+        System.out.println("Cloning p as p3");
+        try{
+            Pair p3 = (Pair<Integer,String>)p.clone();
+            System.out.println("Result: p3 = [" + p3.toString() + "]");
+        }catch(CloneNotSupportedException c){
+            System.out.println("Cloning failed");
+        }  
+        
+        
+        // test serialization
+        System.out.println("");
+        System.out.println("TESTING SERIALIZATION");
+        try {
+            serializeTest(p);
+        } catch (IOException ex) {
+            System.out.println("");
+        }
+        
+        System.out.println();
+        System.out.println("TESTING hashCode()");
+        System.out.println("hashCode for p and p1 (identical Pairs) = " + p.hashCode()+ " and " + p1.hashCode());
+        System.out.println("hashCode for p2 = " + p2.hashCode());
+    }
+}
+ \end{lstlisting}
+
+
+\end{enumerate}
+  		
+
+  	
