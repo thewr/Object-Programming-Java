@@ -1,0 +1,21 @@
+\input{D:/Documents/COURSES/OOP/tex/packages.tex}
+
+\title{Homework 6}
+\date{}
+\author{%
+Ryan Thew\\
+COP4331  003 \\
+}
+
+
+\begin{document}
+\maketitle
+
+\input{q1.tex}
+\newpage	
+%\input{q2.tex}
+%\newpage
+%\input{q3.tex}
+%\newpage
+%\input{q4.tex}
+\end{document}
